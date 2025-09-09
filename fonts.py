@@ -1,5 +1,7 @@
 """
 File contains the properties of available Telugu Fonts as a dictionary.
+This is the product of the repository github.com/rakeshvar/telugu_fonts
+The fonts here can be explored in detail in that repository.
 Fields:
     Font Name
     Style of gho (Kannada/Telugu)
@@ -9,7 +11,6 @@ Fields:
     Abbreviation
     Has Bold
 """
-from uaclient.cli import system_command
 
 SIZE, GHO, REPHA, PPU, SPACING, BOLD, ABBR, = range(7)
 font_properties = {
