@@ -33,7 +33,7 @@ font_properties = {
 'GIST-TLOTManu':            [28, 'K', 'LR', 1, 1, 1, 'Manu',    ],
 'GIST-TLOTMenaka':          [30, 'K', 'LR', 1, 1, 1, 'Menaka',  ],
 'GIST-TLOTPavani':          [28, 'K', 'LR', 1, 1, 0, 'Pavani',  ],
-'GIST-TLOTPriya':           [23, 'K', 'LR', 1, 1, 0, 'Priya',   ],      # XHt reduced cuz Going Too Wide
+'GIST-TLOTPriya':           [22, 'K', 'LR', 1, 1, 0, 'Priya',   ],      # XHt reduced cuz Going Too Wide
 # 'GIST-TLOTRajan':           [28, 'K', 'LR', 1, 1, 0, 'Rajan',   ],      # Border Font
 'GIST-TLOTRajani':          [30, 'K', 'LR', 1, 1, 0, 'Rajani',  ],
 'GIST-TLOTSanjana':         [28, 'K', 'LR', 1, 1, 0, 'Sanjana', ],
@@ -82,6 +82,5 @@ font_properties_list = list(font_properties.items())
 def random_font():
     import random
     font, properties = random.choice(font_properties_list)
-    style = random.randrange(4 if properties[BOLD] else 2)
-
+    style = random.randrange(4)
     return font, properties[SIZE], style
