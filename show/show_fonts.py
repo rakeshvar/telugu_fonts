@@ -17,7 +17,9 @@ def image_to_base64(img):
     img.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
-################################################################################ HTML Writer
+#--------------------------------------------------------
+# HTML Writer
+#--------------------------------------------------------
 html_head = """
 <!DOCTYPE html>
 <html>
@@ -53,14 +55,14 @@ class HTMLWriter:
             f.writelines(self.content)
         print(f"Saved HTML {self.out_html}")
 
-    def add_image(self, font, img_base64, info, style="", style_color="black"):
+    def add_base64(self, font, img_base64, info, style="", style_color="black"):
         self.content.append(f"""
         <div class="font-sample">
             <div class="font-name">{font} <span style="color: {style_color};">{style}</span> {info}</div>
             <img src="data:image/png;base64,{img_base64}" alt="{font}">
         </div>""")
 
-    def add_font_text(self, font, style, size, text, sytle_color="black"):
+    def add_unicode(self, font, style, size, text):
         css = f"font-family: '{font}'; font-size: {size}px;"
         style_lower = style.lower().strip()
 
@@ -76,19 +78,21 @@ class HTMLWriter:
 
         self.content.append(f"""<div class='font-sample'><div style=\"{css}\">{font} {style} {size}px {text}</div></div>""")
 
-    def add_text(self, text, style, aux="<hr>"):
+    def add_other(self, text, style, aux="<hr>"):
         self.content.append(f"{aux}<{style}>{text}</{style}>\n")
 
-################################################################################ Saving Fonts from List
+#--------------------------------------------------------
+# Various Savers
+#--------------------------------------------------------
 
-def print_faces_html_text(font_names_list, out_html, text, size=0):
+def print_faces_html_unicode(font_names_list, out_html, text, size=0):
     """
-    Print all the font faces in the list to a html file
+    Print all the font faces in the list to a html file as formatted unicode text
     """
     out_html_path = Path(out_html).with_suffix(".html")
     with HTMLWriter(out_html_path) as h:
         for font_name in tqdm(font_names_list):
-            h.add_text(font_name, "h2")
+            h.add_other(font_name, "h2")
             sz, gho, rep, ppu, sp, bold, abbr = font_properties[font_name]
             faces_orig = font_faces[font_name]
             faces = set(faces_orig + ["", "Regular", "Bold", "Italic", "Bold Italic"])
@@ -96,18 +100,17 @@ def print_faces_html_text(font_names_list, out_html, text, size=0):
             for face in faces:
                 font_style = f"{font_name} {face} {use_sz}"
                 print(f"Adding {font_style}")
-                h.add_font_text(font_name, face, use_sz, text, "green" if face in faces_orig else "red")
+                h.add_unicode(font_name, face, use_sz, text, "green" if face in faces_orig else "red")
 
-################################################################################ Saving Fonts from List
 
-def print_faces(font_names_list, out_html, text, width, height, size):
+def print_faces_html_base64(font_names_list, out_html, text, width, height, size):
     """
-    Print all the font faces in the list to a html file
+    Print all the font faces in the list to a html file as rendered base64 images
     """
     out_html_path = Path(out_html).with_suffix(".html")
     with HTMLWriter(out_html_path) as h:
         for font_name in tqdm(font_names_list):
-            h.add_text(font_name, "h2")
+            h.add_other(font_name, "h2")
             sz, gho, rep, ppu, sp, bold, abbr = font_properties[font_name]
             faces_orig = font_faces[font_name]
             faces = set(faces_orig + ["", "Regular", "Bold", "Italic", "Bold Italic"])
@@ -118,17 +121,17 @@ def print_faces(font_names_list, out_html, text, width, height, size):
                 img = scribe_text(text, font_style, width, height, 10, 10)
                 img = Image.fromarray(255-img, "L")
                 img_base64 = image_to_base64(img)
-                h.add_image(font_name, img_base64, font_properties[font_name], face,
+                h.add_base64(font_name, img_base64, font_properties[font_name], face,
                             "green" if face in faces_orig else "red")
 
 
-def save_images_from_list(font_names, out_folder, sample_text, width, height, sz):
+def save_images_from_list(font_names_list, out_folder, sample_text, width, height, sz):
     """
     Save samples of all the fonts to images in out_folder
     """
     out_folder = Path(out_folder)
     out_folder.mkdir(exist_ok=True)
-    for font_name in font_names:
+    for font_name in font_names_list:
         size = font_properties[font_name][0] if sz==0 else sz
         font_style = f"{font_name} {size}"
         tif_file = out_folder / f"{font_name}.tif"
@@ -138,7 +141,9 @@ def save_images_from_list(font_names, out_folder, sample_text, width, height, sz
         img = Image.fromarray(255 - img)
         img.save(tif_file)
 
-#################################################################################### Saving from a directory
+#--------------------------------------------------------
+# Saving from a directory
+#--------------------------------------------------------
 
 def get_font_names(ttfont):
     """
@@ -185,7 +190,7 @@ def print_folder(font_folder, out_html, text, width, height, size):
             print("Printing ", font_path)
             img = generate_font_sample_pil(font_path, text, width, height, size)
             img_base64 = image_to_base64(img)
-            h.add_image(font_path, img_base64, get_font_info(font_path))
+            h.add_base64(font_path, img_base64, get_font_info(font_path))
 
 def save_images_from_folder(font_folder, out_folder, text, width, height, size):
     """
@@ -209,7 +214,8 @@ import argparse
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Render (Telugu) fonts from a predefined list or from a directory, and output as HTML or images.")
+        description=f"Render (Telugu) fonts from a predefined list or from a directory, and output as HTML or images. e.g.:-"
+                    f"${sys.argv[0]} -T -O images -P sample_images -f sample_texts/verse.txt -Z 0 -W 2048 -H 1024")
 
     # Mutually exclusive: predefined list 'telugu' or a directory
     group = parser.add_mutually_exclusive_group(required=True)
@@ -220,10 +226,10 @@ def main():
 
     # Output type
     parser.add_argument("-O", "--output-type", choices=["embedded", "css", "images"], required=True,
-        help="""Choose whether to output as 
-        - embedded : one html file with embedded images 
-        - css     : one html file with text and css
-        - images   : separate images in the output folder
+        help="""Choose whether to output as \n
+        \t- embedded : one html file with embedded images \n 
+        \t- css     : one html file with text and css \n
+        \t- images   : separate images in the output folder \n
         """)
     # Output paths depending on type
     def_out = "out"
@@ -262,7 +268,7 @@ def main():
         # Routing based on output type
         if args.output_type == "embedded":
             print(f"Rendering {len(fonts_list)} fonts to HTML at {args.output_path} as embedded images.")
-            print_faces(fonts_list, args.output_path, sample_text, args.width, args.height, args.size)
+            print_faces_html_base64(fonts_list, args.output_path, sample_text, args.width, args.height, args.size)
 
         elif args.output_type == "images":
             print(f"Rendering {len(fonts_list)} fonts as tif images into {args.output_path} .")
@@ -270,7 +276,7 @@ def main():
 
         elif args.output_type == "css":
             print(f"Rendering {len(fonts_list)} fonts to HTML at {args.output_path} with CSS styles.")
-            print_faces_html_text(fonts_list, args.output_path, sample_text, args.size)
+            print_faces_html_unicode(fonts_list, args.output_path, sample_text, args.size)
 
     else:
         if args.output_type == "embedded":

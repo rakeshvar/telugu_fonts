@@ -32,8 +32,8 @@ font_properties = {
 'GIST-TLOTManu':            [28, 'K', 'LR', 1, 1, 1, 'Manu',    ],
 'GIST-TLOTMenaka':          [30, 'K', 'LR', 1, 1, 1, 'Menaka',  ],
 'GIST-TLOTPavani':          [28, 'K', 'LR', 1, 1, 0, 'Pavani',  ],
-'GIST-TLOTPriya':           [28, 'K', 'LR', 1, 1, 0, 'Priya',   ],
-'GIST-TLOTRajan':           [28, 'K', 'LR', 1, 1, 0, 'Rajan',   ],
+# 'GIST-TLOTPriya':           [28, 'K', 'LR', 1, 1, 0, 'Priya',   ],      # Going Too Wide
+# 'GIST-TLOTRajan':           [28, 'K', 'LR', 1, 1, 0, 'Rajan',   ],      # Border Font
 'GIST-TLOTRajani':          [30, 'K', 'LR', 1, 1, 0, 'Rajani',  ],
 'GIST-TLOTSanjana':         [28, 'K', 'LR', 1, 1, 0, 'Sanjana', ],
 'GIST-TLOTSitara':          [28, 'K', 'LR', 1, 1, 0, 'Sitara',  ],
@@ -46,7 +46,7 @@ font_properties = {
 'Lohit Telugu':             [36, 'K', 'BB', 0, 1, 1, 'Lohit',   ],
 'Mallanna':                 [40, 'T', 'BB', 1, 1, 1, 'Mallanna',],
 'Mandali':                  [36, 'T', 'LB', 1, 1, 1, 'Mandali', ],
-'Nandakam':                 [40, 'T', 'BB', 1, 1, 1, 'Nandakam',  ],
+# 'Nandakam':                 [40, 'T', 'BB', 1, 1, 1, 'Nandakam',  ],   # Border Font
 'Nandini3':                 [36, 'K', 'LL', 0, 1, 1, 'Nandini3',  ],
 'NATS':                     [54, 'K', 'BR', 1, 1, 1, 'NATS',    ],
 'Nirmala UI':               [36, 'K', 'LL', 0, 1, 1, 'Nirmala',   ], # Semilight

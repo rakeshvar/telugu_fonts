@@ -6,20 +6,33 @@ import sys
 from pathlib import Path
 
 def find_xht(img_path):
-    print("Processing ", img_path)
     page = Page(img_path)
     page._calc_hist()
     page._find_baselines()
     page._separate_lines()
     page.save_image_with_hist_and_lines(80)
-    xhts = [l.xht for l in page.lines]
+
+    linehts, xhts, letter_wds, letter_hts = [], [], [], []
+    for l in page.lines:
+        linehts.append(l.ht)
+        xhts.append(l.xht)
+        for c in l.letters:
+            letter_wds.append(c.wd)
+            letter_hts.append(c.ht)
+
+    median_lineht = median(linehts)
     median_xht = median(xhts)
+    median_letter_ht = median(letter_hts)
+    median_wd = median(letter_wds)
     scale = int(48 * 48 / median_xht)
-    print(f"Xhts: {xhts}, Median: {median_xht}, Scale: {scale}")
+
+    font = Path(img_path).stem
+    print(f"{font},{median_lineht},{median_xht},{median_letter_ht},{median_wd},{scale}")
 
 def main():
     dir_path = Path(sys.argv[1])
 
+    print(f"Font,LineHt,XHt,LetterHt,LetterWd,Scale")
     for file_path in sorted(dir_path.glob("*.tif"), key=lambda f: f.name.lower()):
         try:
             find_xht(file_path)

@@ -8,7 +8,6 @@ from PIL import Image as im
 from PIL import ImageDraw as imd
 
 import logging
-# from scipy.stats import itemfreq
 from helpers import img_to_bin_arr, bin_arr_to_rgb_img
 from conncomp import get_conn_comp
 
